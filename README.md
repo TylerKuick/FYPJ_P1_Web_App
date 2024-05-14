@@ -44,3 +44,7 @@ Error with data source ("patient_doc_id not specified"):
   ANY_VALUE(old_data) as old_data,
   STRING(PARSE_JSON(path_params).patientID) as patient_doc_id`
 * After editing the query, click on "Save View", next to the "Run" button.
+
+Importing Data from Firestore into BigQuery: 
+Reference Guide: https://github.com/firebase/extensions/blob/master/firestore-bigquery-export/guides/IMPORT_EXISTING_DOCUMENTS.md
+Youtube Guide: https://youtu.be/eGDojMEcs0M?si=oKek8DPUOKcR0fQP
