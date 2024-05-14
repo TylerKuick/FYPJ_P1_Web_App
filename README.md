@@ -27,3 +27,20 @@ Data Source used in Looker Report is a custom BigQuery query:
 `enhance-bdc3f.enhance_export.patient_visits_raw_latest` refers to the dataset in BigQuery that streams data from the Firestore database (Updates BigQuery table according to the updates in Firestore)
 
 The "WHERE" statement checks the for a patient_doc_id that contains @documentid (parameter passed to the Looker Report that filters each graph/visualisation)
+
+**Troubleshooting Looker Report:**
+
+Error with data source ("patient_doc_id not specified"): 
+* In the event that you uninstall or reinstall the extension "Stream Firestore to BigQuery", the dataset will be disconnected or overridden (When reinstalling the extension with all the same settings) and the Looker Report will show an error with the data source. To fix this, edit the `enhance-bdc3f.enhance_export.patient_visits_raw_latest` View query by clicking on it in the BigQuery Console -> Details -> Edit Query.
+* Replace the 2nd `SELECT` statement (After the `WITH latest AS...` statement) with the following query:
+`t.document_name,
+  document_id,
+  timestamp as timestamp,
+  ANY_VALUE(event_id) as event_id,
+  operation as operation,
+  PARSE_DATETIME("%d/%m/%Y %H:%M:%S",STRING(PARSE_JSON(ANY_VALUE(data)).date)) as date,
+  INT64(PARSE_JSON(ANY_VALUE(data)).averageSysBP) as sys_bp,
+  INT64(PARSE_JSON(ANY_VALUE(data)).averageDiaBP) as dia_bp,
+  ANY_VALUE(old_data) as old_data,
+  STRING(PARSE_JSON(path_params).patientID) as patient_doc_id`
+* After editing the query, click on "Save View", next to the "Run" button.
